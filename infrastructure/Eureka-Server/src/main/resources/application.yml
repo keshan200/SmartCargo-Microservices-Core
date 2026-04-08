@@ -1,0 +1,19 @@
+server:
+  port: 8761
+
+spring:
+  application:
+    name: Eureka-Server
+
+eureka:
+  client:
+    # Eureka Server එක තමන්වම register කරගැනීම අවශ්‍ය නැති නිසා මෙය false කරන්න
+    register-with-eureka: false
+    # වෙනත් සර්වර් වලින් registry එක fetch කරගැනීම අවශ්‍ය නැති නිසා මෙය false කරන්න
+    fetch-registry: false
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+  server:
+    # සේවාවන් ලියාපදිංචි වීමේදී සිදුවන ප්‍රමාදයන් අවම කිරීමට (Development වලදී පමණක් මෙය සුදුසුයි)
+    wait-time-in-ms-when-sync-empty: 0

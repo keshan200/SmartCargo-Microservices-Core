@@ -1,0 +1,19 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: Config-Server
+  profiles:
+    active: native
+  cloud:
+    config:
+      server:
+        native:
+          # ඔබේ configuration files (yml/properties) තියෙන folder එකේ path එක මෙතනට දෙන්න
+          search-locations: classpath:/config
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
