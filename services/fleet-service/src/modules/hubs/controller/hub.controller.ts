@@ -3,6 +3,7 @@ import { Controller, Post, Get, Patch, Body, Param } from '@nestjs/common';
 
 import { CreateHubDto } from '../dto/hub.dto';
 import { HubService } from '../service/hub.service';
+import { MessagePattern } from '@nestjs/microservices/decorators/message-pattern.decorator';
 
 @Controller('api/v1/hubs')
 
@@ -28,4 +29,14 @@ export class HubController {
   update(@Param('id') id: string, @Body() dto: CreateHubDto) {
     return this.hubService.updateHub(id, dto);
   }
+
+
+  @MessagePattern({ cmd: 'get_hub_details' })
+async getHubDetails(hubId: string) {
+  const hub = await this.hubService.getHubById(hubId);
+  return { 
+    lat: hub.latitude, 
+    lng: hub.longitude 
+  };
+}
 }

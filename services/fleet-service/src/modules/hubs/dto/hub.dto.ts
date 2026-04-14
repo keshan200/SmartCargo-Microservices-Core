@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsString, IsOptional, IsNumber } from 'class-validator';
 
 export class CreateHubDto {
   @IsString() @IsNotEmpty()
@@ -12,4 +12,9 @@ export class CreateHubDto {
 
   @IsString() @IsNotEmpty()
   contact_no: string;
+
+  @IsNotEmpty()@IsNumber()
+  latitude: number;
+  @IsNotEmpty()@IsNumber()
+  longitude: number;
 }

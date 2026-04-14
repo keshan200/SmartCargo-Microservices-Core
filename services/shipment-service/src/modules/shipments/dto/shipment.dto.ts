@@ -1,38 +1,104 @@
-import { IsString, IsEmail, IsNumber, IsEnum, IsNotEmpty, IsMongoId, IsOptional, ValidateNested } from 'class-validator';
+import { 
+  IsString, 
+  IsNotEmpty, 
+  IsEmail, 
+  IsNumber, 
+  IsEnum, 
+  IsOptional, 
+  IsMongoId, 
+  ValidateNested, 
+  IsObject 
+} from 'class-validator';
 import { Type } from 'class-transformer';
+import { 
+  PackageType, 
+  ServiceType, 
+  PaymentMethod 
+} from '../interfaces/shipment.enum';
 
-class DimensionsDto {
-  @IsNumber() @IsNotEmpty() length: number;
-  @IsNumber() @IsNotEmpty() width: number;
-  @IsNumber() @IsNotEmpty() height: number;
+class PackageDimensionsDto {
+  @IsNumber()
+  @IsNotEmpty()
+  length: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  width: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  height: number;
 }
 
 export class CreateShipmentDto {
-  @IsMongoId() @IsNotEmpty() sender_id: string;
-  @IsString() @IsNotEmpty() receiver_name: string;
-  @IsEmail() @IsNotEmpty() receiver_email: string;
-  @IsString() @IsNotEmpty() receiver_phone: string;
-  @IsString() @IsNotEmpty() receiver_address: string;
-  @IsString() @IsNotEmpty() receiver_city: string;
-  @IsString() @IsNotEmpty() receiver_postal_code: string;
+  // 1. Sender ID (MongoDB ID එකක් විය යුතුයි)
+  @IsMongoId()
+  @IsNotEmpty()
+  sender_id: string;
 
-  @IsEnum(['DOCUMENT', 'PARCEL', 'FRAGILE', 'LIQUID'])
-  @IsNotEmpty() package_type: string;
+  // 2. Receiver Details
+  @IsString()
+  @IsNotEmpty()
+  receiver_name: string;
 
-  @IsNumber() @IsNotEmpty() weight_kg: number;
+  @IsEmail()
+  @IsNotEmpty()
+  receiver_email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  receiver_phone: string;
+
+  @IsString()
+  @IsNotEmpty()
+  receiver_address: string;
+
+  @IsString()
+  @IsNotEmpty()
+  receiver_city: string;
+
+  @IsString()
+  @IsNotEmpty()
+  receiver_postal_code: string;
+
+  // 3. Package Details
+  @IsEnum(PackageType)
+  @IsNotEmpty()
+  package_type: PackageType;
+
+  @IsNumber()
+  @IsNotEmpty()
+  weight_kg: number;
 
   @IsOptional()
+  @IsObject()
   @ValidateNested()
-  @Type(() => DimensionsDto)
-  dimensions?: DimensionsDto;
+  @Type(() => PackageDimensionsDto)
+  dimensions?: PackageDimensionsDto;
 
-  @IsEnum(['STANDARD', 'EXPRESS'])
-  @IsNotEmpty() service_type: string;
+  // 4. Logistics & Service
+  @IsEnum(ServiceType)
+  @IsNotEmpty()
+  service_type: ServiceType;
 
-  @IsNumber() @IsNotEmpty() total_cost: number;
+  @IsEnum(PaymentMethod)
+  @IsNotEmpty()
+  payment_method: PaymentMethod;
 
-  @IsEnum(['CASH_ON_DELIVERY', 'PREPAID'])
-  @IsNotEmpty() payment_method: string;
+  @IsMongoId()
+  @IsNotEmpty()
+  current_hub_id: string;
 
-  @IsMongoId() @IsNotEmpty() current_hub_id: string;
+  // 5. Receiver Location Coordinates (Distance කැල්කියුලේට් කරන්න මේක ඕනෙමයි)
+  @IsNumber()
+  @IsNotEmpty()
+  delivery_lat: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  delivery_lng: number;
+
+  /* සටහන: tracking_id සහ total_cost මෙතනට දාන්න එපා. 
+     ඒවා ShipmentService එක ඇතුළේදී අපි generate කරනවා.
+  */
 }

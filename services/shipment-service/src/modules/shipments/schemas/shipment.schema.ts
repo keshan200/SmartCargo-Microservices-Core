@@ -1,9 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
+import { PackageType, PaymentMethod, PaymentStatus, ServiceType, ShipmentStatus } from '../interfaces/shipment.enum';
 
 export type ShipmentDocument = Shipment & Document;
 
-// Dimensions සඳහා කුඩා Schema එකක් (Nested)
 @Schema({ _id: false })
 class PackageDimensions {
   @Prop({ type: Number, required: true })
@@ -16,13 +16,15 @@ class PackageDimensions {
   height: number;
 }
 
-
-
 @Schema({ timestamps: true })
 export class Shipment {
+  @Prop({ type: String, required: true, unique: true, index: true })
+  tracking_id: string;
+  
+  @Prop({ type: String, default: null }) // QR එකට අවශ්‍ය Data එක මෙහි තබා ගන්න
+  qr_code: string;
 
-
-  @Prop({ type: Types.ObjectId, required: true })
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
   sender_id: Types.ObjectId;
 
   // Receiver Details
@@ -47,10 +49,10 @@ export class Shipment {
   // Package Details
   @Prop({ 
     type: String, 
-    enum: ['DOCUMENT', 'PARCEL', 'FRAGILE', 'LIQUID'], 
+    enum: Object.values(PackageType), 
     required: true 
   })
-  package_type: string;
+  package_type: PackageType;
 
   @Prop({ type: Number, required: true })
   weight_kg: number;
@@ -59,39 +61,57 @@ export class Shipment {
   dimensions: PackageDimensions;
 
   // Cost & Payment
-  @Prop({ type: String, enum: ['STANDARD', 'EXPRESS'], required: true })
-  service_type: string;
+  @Prop({ 
+    type: String, 
+    enum: Object.values(ServiceType), 
+    required: true 
+  })
+  service_type: ServiceType;
 
-  @Prop({ type: Number, required: true })
+  @Prop({ type: Number, default: 0 })
   total_cost: number;
 
   @Prop({ 
     type: String, 
-    enum: ['PENDING', 'PAID'], 
-    default: 'PENDING' 
+    enum: Object.values(PaymentStatus), 
+    default: PaymentStatus.PENDING 
   })
-  payment_status: string;
+  payment_status: PaymentStatus;
 
   @Prop({ 
     type: String, 
-    enum: ['CASH_ON_DELIVERY', 'PREPAID'], 
+    enum: Object.values(PaymentMethod), 
     required: true 
   })
-  payment_method: string;
+  payment_method: PaymentMethod;
 
   // Logistics & Status
   @Prop({
     type: String,
-    enum: ['PICKED_UP', 'IN_TRANSIT', 'SORTING', 'OUT_FOR_DELIVERY', 'DELIVERED', 'CANCELLED'],
-    default: 'PICKED_UP',
+    enum: Object.values(ShipmentStatus),
+    default: ShipmentStatus.ORDERED, // මුලින්ම ඕඩර් කළ අවස්ථාව
   })
-  current_status: string;
+  current_status: ShipmentStatus;
 
   @Prop({ type: Types.ObjectId, ref: 'Hub', required: true })
   current_hub_id: Types.ObjectId;
 
   @Prop({ type: Types.ObjectId, ref: 'EmployeeProfile', default: null })
   assigned_driver_id: Types.ObjectId;
+
+  // Receiver Coordinates (Live Tracking වලට අත්‍යවශ්‍යයි)
+  @Prop({ type: Number, required: true })
+  delivery_lat: number;
+
+  @Prop({ type: Number, required: true })
+  delivery_lng: number;
+
+  // Actual Times (Analytics වලට)
+  @Prop({ type: Date, default: null })
+  picked_up_at: Date;
+
+  @Prop({ type: Date, default: null })
+  delivered_at: Date;
 }
 
 export const ShipmentSchema = SchemaFactory.createForClass(Shipment);

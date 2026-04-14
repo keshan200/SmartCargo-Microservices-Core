@@ -7,18 +7,21 @@ export class Hub extends Document {
   
   @Prop({ required: true, unique: true, trim: true })
   hub_name: string;
-
  
   @Prop({ required: true, trim: true })
   city: string;
 
-
   @Prop({ required: true })
   address: string;
 
-
   @Prop({ required: true })
   contact_no: string;
+
+  @Prop({ required: true, type: Number })
+  latitude: number;
+
+  @Prop({ required: true, type: Number })
+  longitude: number;
   
 }
 
