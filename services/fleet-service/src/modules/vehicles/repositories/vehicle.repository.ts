@@ -31,6 +31,6 @@ export class VehicleRepository {
 
 
   async findById(id: string): Promise<VehicleDocument | null> {
-    return await this.vehicleModel.findById(new Types.ObjectId(id)).exec();
-  }
+  return await this.vehicleModel.findById(new Types.ObjectId(id)).exec();
+}
 }

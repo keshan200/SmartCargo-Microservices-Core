@@ -25,4 +25,11 @@ async updateStatus(id: string, status: string, driverId?: string): Promise<Shipm
   
   return this.shipmentModel.findByIdAndUpdate(id, updateData, { new: true }).exec();
 }
+
+
+async findByIds(ids: string[]): Promise<ShipmentDocument[]> {
+    return this.shipmentModel.find({ 
+      tracking_id: { $in: ids } 
+    }).exec();
+  }
 }

@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, BadRequestException } from '@nestjs/comm
 import { CreateVehicleDto } from '../dto/vehicle.dto';
 import { VehicleRepository } from '../repositories/vehicle.repository';
 import { Types } from 'mongoose';
+import { Vehicle, VehicleDocument } from '../schemas/vehicle.schema';
 
 
 @Injectable()
@@ -18,7 +19,11 @@ export class VehicleService {
     };
     return await this.vehicleRepository.create(vehicleData as any);
   }
+  
 
+async findOne(id: string): Promise<VehicleDocument | null> {
+    return await this.vehicleRepository.findById(id);
+  }
 
 
   async getAllVehicles() {

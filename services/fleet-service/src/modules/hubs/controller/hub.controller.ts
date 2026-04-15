@@ -31,12 +31,21 @@ export class HubController {
   }
 
 
-  @MessagePattern({ cmd: 'get_hub_details' })
+@MessagePattern({ cmd: 'get_hub_details' }) //req ekk awam res ekk yannna
 async getHubDetails(hubId: string) {
   const hub = await this.hubService.getHubById(hubId);
+  console.log("Fetching details for Hub:", hubId);
+
+  if (!hub) {
+    console.error("Hub not found:", hubId);
+    return null;
+  }
+
   return { 
     lat: hub.latitude, 
     lng: hub.longitude 
   };
 }
+
+
 }

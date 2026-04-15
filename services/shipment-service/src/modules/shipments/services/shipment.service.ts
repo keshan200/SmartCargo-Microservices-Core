@@ -90,7 +90,9 @@ private calculateCost(weight: number, distance: number, serviceType: string): nu
 }
   }
 
-
+async getShipmentsByList(ids: string[]): Promise<any[]> {
+  return await this.shipmentRepository.findByIds(ids);
+}
 
 
   async getShipmentDetails(trackingId: string) {

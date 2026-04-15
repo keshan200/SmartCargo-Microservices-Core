@@ -6,6 +6,7 @@ import { ShipmentController } from './controllers/shipment.controller';
 import { ShipmentRepository } from './repositories/shipment.repository';
 import { ShipmentService } from './services/shipment.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ShipmentMessageController } from './controllers/shipment-messages.controller';
 
 @Module({
   imports: [
@@ -20,11 +21,19 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
       queue: 'fleet_queue',
     },
   },
+
+
+
 ]),
+
+
   ],
 
   //API endpoints clasees
-  controllers: [ShipmentController],
+  controllers: [
+    ShipmentController,
+    ShipmentMessageController
+  ],
 
 
   //buisenss logic classes

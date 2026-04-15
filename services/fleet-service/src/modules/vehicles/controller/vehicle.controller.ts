@@ -1,16 +1,31 @@
-import { Controller, Post, Get, Patch, Body, Param, HttpStatus, Res } from '@nestjs/common';
+import { Controller, Post, Get, Patch, Body, Param, HttpStatus, Res, Inject } from '@nestjs/common';
 import { CreateVehicleDto } from '../dto/vehicle.dto';
 import { VehicleService } from '../service/vehicle.service';
+import { ClientProxy } from '@nestjs/microservices/client/client-proxy';
 
 
 @Controller('api/v1/vehicles')
 export class VehicleController {
-  constructor(private readonly vehicleService: VehicleService) {}
+  constructor(
+    private readonly vehicleService: VehicleService,
+   @Inject('FLEET_SERVICE_VEHICLE') private readonly client: ClientProxy
+  
+  )
+  {}
+
 
 
   @Post("/create")
   async create(@Body() createVehicleDto: CreateVehicleDto, @Res() res) {
     const vehicle = await this.vehicleService.createVehicle(createVehicleDto);
+
+   this.client.emit('vehicle_created', {
+    vehicle_id: vehicle._id,
+    vehicle_number: vehicle.vehicle_number,
+    capacity_kg: vehicle.capacity_kg
+  });
+
+
     return res.status(HttpStatus.CREATED).json({
       status: 'success',
       data: vehicle
