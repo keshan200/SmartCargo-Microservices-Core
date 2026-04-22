@@ -21,8 +21,16 @@ export class Vehicle {
   @Prop({ type: Number, default: 0 })
   current_lng: number;
 
-  @Prop({ type: Date, default: Date.now })
-  last_updated: Date;
+  
+  @Prop({ type: Boolean, default: true })
+  is_active: boolean;
+
+  @Prop({ 
+    type: String, 
+    enum: ['AVAILABLE', 'ON_TRIP', 'MAINTENANCE', 'OUT_OF_SERVICE'], 
+    default: 'AVAILABLE' 
+  })
+  status: string;
 
   @Prop({ type: Types.ObjectId, ref: 'EmployeeProfile', default: null })
   current_driver_id: Types.ObjectId;

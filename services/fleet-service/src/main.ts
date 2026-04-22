@@ -15,6 +15,8 @@ async function main() {
     },
   });
 
+
+
   await app.startAllMicroservices();
 
 

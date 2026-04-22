@@ -18,3 +18,4 @@ export class CreateHubDto {
   @IsNotEmpty()@IsNumber()
   longitude: number;
 }
+
