@@ -46,7 +46,7 @@ private calculateCost(weight: number, distance: number, serviceType: string): nu
 
   async createShipment(dto: CreateShipmentDto) {
     try {
-      // A. Fleet Service එකෙන් හබ් එකේ විස්තර ඉල්ලීම (RabbitMQ Request-Response)
+    
       const hubDetails = await lastValueFrom(
         this.client.send({ cmd: 'get_hub_details' }, dto.current_hub_id),
       );
@@ -75,7 +75,7 @@ private calculateCost(weight: number, distance: number, serviceType: string): nu
         tracking_id: trackingId,
         qr_code: trackingId, // passe set karagn puluwan
         total_cost: totalCost,
-        sender_id: new Types.ObjectId(dto.sender_id),
+        sender_id: dto.sender_id ? new Types.ObjectId(dto.sender_id) : null,
         current_hub_id: new Types.ObjectId(dto.current_hub_id),
       };
 
@@ -100,4 +100,18 @@ async getShipmentsByList(ids: string[]): Promise<any[]> {
     if (!shipment) throw new BadRequestException('Invalid Tracking ID');
     return shipment;
   }
+
+
+
+  async linkUserByEmail(email: string, userId: string) {
+  return this.shipmentRepository.updateMany(
+    { 
+      sender_email: email.toLowerCase(), 
+      sender_id: null 
+    },
+    { 
+      $set: { sender_id: userId } 
+    }
+  );
+}
 }

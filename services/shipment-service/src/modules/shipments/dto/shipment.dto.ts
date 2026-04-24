@@ -1,19 +1,19 @@
-import { 
-  IsString, 
-  IsNotEmpty, 
-  IsEmail, 
-  IsNumber, 
-  IsEnum, 
-  IsOptional, 
-  IsMongoId, 
-  ValidateNested, 
-  IsObject 
+import {
+  IsString,
+  IsNotEmpty,
+  IsEmail,
+  IsNumber,
+  IsEnum,
+  IsOptional,
+  IsMongoId,
+  ValidateNested,
+  IsObject,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { 
-  PackageType, 
-  ServiceType, 
-  PaymentMethod 
+import {
+  PackageType,
+  ServiceType,
+  PaymentMethod,
 } from '../interfaces/shipment.enum';
 
 class PackageDimensionsDto {
@@ -31,10 +31,30 @@ class PackageDimensionsDto {
 }
 
 export class CreateShipmentDto {
-  // 1. Sender ID (MongoDB ID එකක් විය යුතුයි)
+  // 1. Sender ID 
   @IsMongoId()
-  @IsNotEmpty()
+  @IsOptional()
   sender_id: string;
+
+  @IsNotEmpty()
+  sender_name: string;
+
+  @IsEmail()
+  @IsNotEmpty()
+  sender_email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  sender_phone: string;
+
+  @IsString()
+  sender_address: string;
+
+  @IsNotEmpty()
+  sender_city: string;
+
+  @IsNotEmpty()
+  sender_postal_code: string;
 
   // 2. Receiver Details
   @IsString()
@@ -98,7 +118,5 @@ export class CreateShipmentDto {
   @IsNotEmpty()
   delivery_lng: number;
 
-  /* සටහන: tracking_id සහ total_cost මෙතනට දාන්න එපා. 
-     ඒවා ShipmentService එක ඇතුළේදී අපි generate කරනවා.
-  */
+ 
 }

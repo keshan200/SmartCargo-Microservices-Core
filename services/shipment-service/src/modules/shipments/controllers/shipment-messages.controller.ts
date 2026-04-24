@@ -2,6 +2,7 @@ import { Controller } from "@nestjs/common";
 import { MessagePattern } from "@nestjs/microservices/decorators/message-pattern.decorator";
 import { Payload } from "@nestjs/microservices/decorators/payload.decorator";
 import { ShipmentService } from "../services/shipment.service";
+import { EventPattern } from "@nestjs/microservices";
 
 @Controller()
 export class ShipmentMessageController {
@@ -18,4 +19,12 @@ export class ShipmentMessageController {
 
     return shipments; 
   }
+
+
+
+
+@EventPattern('customer_registered')
+async handleUserRegistered(@Payload() data: { email: string; userId: string }) {
+  await this.shipmentService.linkUserByEmail(data.email, data.userId);
+}
 }

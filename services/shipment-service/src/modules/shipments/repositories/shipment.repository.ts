@@ -32,4 +32,9 @@ async findByIds(ids: string[]): Promise<ShipmentDocument[]> {
       tracking_id: { $in: ids } 
     }).exec();
   }
+
+
+  async updateMany(filter: any, update: any) {
+    return this.shipmentModel.updateMany(filter, update).exec();
+  }
 }

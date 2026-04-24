@@ -18,14 +18,36 @@ class PackageDimensions {
 
 @Schema({ timestamps: true })
 export class Shipment {
-  @Prop({ type: String, required: true, unique: true, index: true })
+  @Prop({ type: String, required: true, unique: true, index: true ,default: null })
   tracking_id: string;
   
   @Prop({ type: String, default: null }) // QR එකට අවශ්‍ය Data එක මෙහි තබා ගන්න
   qr_code: string;
 
-  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+  // Sender Details
+  @Prop({ type: Types.ObjectId, ref: 'User', required: false })
   sender_id: Types.ObjectId;
+
+   @Prop({ type: String, required: true })
+  sender_name: string;
+
+  @Prop({ type: String, required: true })
+  sender_email: string;
+
+  @Prop({ type: String, required: true })
+  sender_phone: string;
+
+  @Prop({ type: String, required: true })
+  sender_address: string;
+
+  @Prop({ type: String, required: true })
+  sender_city: string;
+
+  @Prop({ type: String, required: true })
+  sender_postal_code: string;
+
+
+
 
   // Receiver Details
   @Prop({ type: String, required: true })
@@ -46,6 +68,9 @@ export class Shipment {
   @Prop({ type: String, required: true })
   receiver_postal_code: string;
 
+
+
+
   // Package Details
   @Prop({ 
     type: String, 
@@ -59,6 +84,10 @@ export class Shipment {
 
   @Prop({ type: PackageDimensions, required: false })
   dimensions: PackageDimensions;
+
+
+
+
 
   // Cost & Payment
   @Prop({ 
@@ -85,6 +114,9 @@ export class Shipment {
   })
   payment_method: PaymentMethod;
 
+
+
+
   // Logistics & Status
   @Prop({
     type: String,
@@ -99,12 +131,19 @@ export class Shipment {
   @Prop({ type: Types.ObjectId, ref: 'EmployeeProfile', default: null })
   assigned_driver_id: Types.ObjectId;
 
+
+
+
+
   // Receiver Coordinates (Live Tracking වලට අත්‍යවශ්‍යයි)
   @Prop({ type: Number, required: true })
   delivery_lat: number;
 
   @Prop({ type: Number, required: true })
   delivery_lng: number;
+
+
+
 
   // Actual Times (Analytics වලට)
   @Prop({ type: Date, default: null })
