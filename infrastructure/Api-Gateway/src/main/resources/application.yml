@@ -25,6 +25,10 @@ spring:
               - Path=/api/v1/vehicles/** , /api/v1/hubs/**
 
 
+          - id: user-service-route
+            uri: lb://USER-SERVICE
+            predicates:
+              - Path=/api/v1/auth/**
 
 
 
