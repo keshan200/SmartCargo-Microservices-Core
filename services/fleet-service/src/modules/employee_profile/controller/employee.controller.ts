@@ -18,9 +18,9 @@ export class EmployeeController {
 
 
 
-  @Patch('profile/:userId')
+  @Patch('profile/:user_id')
   async updateEmployeeProfile(
-    @Param('userId') userId: string,
+    @Param('user_id') userId: string,
     @Body() updateData: any,
     @Res() res
   ) {

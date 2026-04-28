@@ -20,7 +20,7 @@ export class EmployeeService {
 
   async createInitialProfile(data: any) {
     const newProfile = new this.employeeProfileModel({
-      user_id: data.userId, // අන්න අර ID එක මෙතනට සෙට් කළා
+      user_id: data.userId, 
       employee_type: data.role,
       status: 'ACTIVE',
     });
@@ -32,9 +32,9 @@ export class EmployeeService {
 
 
 
-  async updateProfile(userId: string, updateData: any): Promise<EmployeeProfileDocument> {
+  async updateProfile(user_id: string, updateData: any): Promise<EmployeeProfileDocument> {
     try {
-      return await this.employeeRepository.updateByUserId(userId, updateData);
+      return await this.employeeRepository.updateByUserId(user_id, updateData);
     } catch (error: unknown) {
       if (error instanceof HttpException) {
         throw error;

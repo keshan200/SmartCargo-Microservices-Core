@@ -21,7 +21,7 @@ export class EmployeeRepository {
     const updatedProfile = await this.employeeProfileModel.findOneAndUpdate(
       { user_id: objectId } as any,
       { $set: updateData } as any,
-      { new: true, runValidators: true }
+      { new: true, runValidators: true, upsert: true, }
     ).exec();
 
     if (!updatedProfile) {

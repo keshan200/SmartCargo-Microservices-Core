@@ -1,27 +1,30 @@
-// src/fleet/dto/update-employee-profile.dto.ts
-import { IsEnum, IsMongoId, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsMongoId, IsOptional, IsString, IsPhoneNumber, MinLength } from 'class-validator';
 import { StaffStatus } from '../interfaces/employee.interface';
 
 export class employeeDto {
-  
 
-  @IsEnum(['DRIVER', 'DISPATCHER'], {
-    message: 'employee_type must be either DRIVER or DISPATCHER',
-  })
+  @IsString()
+  @MinLength(3, { message: 'Full name must be at least 3 characters long' })
   @IsOptional()
-  employee_type?: string;
+  full_name?: string;
 
-  // Hub එක assign කරද්දී මේක පාවිච්චි වෙනවා
+  @IsPhoneNumber(undefined, { message: 'Invalid mobile number format' })
+  @IsOptional()
+  mobile_number?: string;
+
+  @IsString()
+  @IsOptional()
+  address?: string;
+
   @IsMongoId({ message: 'Invalid Hub ID format' })
   @IsOptional()
   assigned_hub_id?: string;
 
-  // Driver කෙනෙක් තමන්ගේ ලයිසන් එක දාද්දී
+
   @IsString()
   @IsOptional()
   license_number?: string;
 
-  // සේවකයාගේ තත්ත්වය මාරු කරද්දී (උදා: ON_TRIP)
   @IsEnum(StaffStatus, {
     message: 'Status must be ACTIVE, ON_LEAVE, or ON_TRIP',
   })

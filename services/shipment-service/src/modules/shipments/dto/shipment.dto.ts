@@ -118,5 +118,10 @@ export class CreateShipmentDto {
   @IsNotEmpty()
   delivery_lng: number;
 
+
+  @IsMongoId()
+  @IsOptional()
+  created_by: string;
+
  
 }

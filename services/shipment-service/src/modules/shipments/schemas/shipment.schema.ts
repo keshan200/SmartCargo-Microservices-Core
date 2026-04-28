@@ -151,6 +151,9 @@ export class Shipment {
 
   @Prop({ type: Date, default: null })
   delivered_at: Date;
+
+  @Prop({ type: Types.ObjectId, ref: 'EmployeeProfile', default: null })
+  created_by: string; 
 }
 
 export const ShipmentSchema = SchemaFactory.createForClass(Shipment);

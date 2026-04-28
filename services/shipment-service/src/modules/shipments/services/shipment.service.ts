@@ -44,51 +44,51 @@ private calculateCost(weight: number, distance: number, serviceType: string): nu
 
 
 
-  async createShipment(dto: CreateShipmentDto) {
-    try {
+async createShipment(dto: CreateShipmentDto, userId: string) { 
+
+  try {
+    const hubDetails = await lastValueFrom(
+      this.client.send({ cmd: 'get_hub_details' }, dto.current_hub_id),
+    );
+
+    if (!hubDetails) {
+      throw new BadRequestException('Hub details not found in Fleet Service');
+    }
+
+    const distance = this.getDistance(
+      hubDetails.lat,
+      hubDetails.lng,
+      dto.delivery_lat,
+      dto.delivery_lng,
+    );
+
+    const totalCost = this.calculateCost(dto.weight_kg, distance, dto.service_type);
+
+    const trackingId = `SC-${Date.now()}-${uuidv4().substring(0, 4).toUpperCase()}`;
+
     
-      const hubDetails = await lastValueFrom(
-        this.client.send({ cmd: 'get_hub_details' }, dto.current_hub_id),
-      );
+    const shipmentData = {
+      ...dto,
+      tracking_id: trackingId,
+      qr_code: trackingId,
+      total_cost: totalCost,
+      created_by: new Types.ObjectId(userId), 
+      sender_id: dto.sender_id ? new Types.ObjectId(dto.sender_id) : null,
+      current_hub_id: new Types.ObjectId(dto.current_hub_id),
+    };
 
-      if (!hubDetails) {
-        throw new BadRequestException('Hub details not found in Fleet Service');
-      }
-
-      //  හබ් එකේ සිට ඩිලිවරි ලොකේෂන් එකට දුර මැනීම
-      const distance = this.getDistance(
-        hubDetails.lat,
-        hubDetails.lng,
-        dto.delivery_lat,
-        dto.delivery_lng,
-      );
-
-      //  ගාස්තුව කැල්කියුලේට් කිරීම
-      const totalCost = this.calculateCost(dto.weight_kg, distance, dto.service_type);
-
-      //  Tracking ID සහ QR Data සෑදීම
-      const trackingId = `SC-${Date.now()}-${uuidv4().substring(0, 4).toUpperCase()}`;
-
-      //  Database එකට අවශ්‍ය විදිහට Object එක සකස් කිරීම
-      const shipmentData = {
-        ...dto,
-        tracking_id: trackingId,
-        qr_code: trackingId, // passe set karagn puluwan
-        total_cost: totalCost,
-        sender_id: dto.sender_id ? new Types.ObjectId(dto.sender_id) : null,
-        current_hub_id: new Types.ObjectId(dto.current_hub_id),
-      };
-
-      // F. සේව් කරලා ප්‍රතිඵලය ලබා දීම
-      return await this.shipmentRepository.create(shipmentData as any);
+    return await this.shipmentRepository.create(shipmentData as any);
       
-   } catch (error: unknown) {
-  if (error instanceof Error) {
-    throw new BadRequestException(`Failed to create shipment: ${error.message}`);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new BadRequestException(`Failed to create shipment: ${error.message}`);
+    }
+    throw new BadRequestException('An unknown error occurred');
   }
-  throw new BadRequestException('An unknown error occurred');
 }
-  }
+
+
+
 
 async getShipmentsByList(ids: string[]): Promise<any[]> {
   return await this.shipmentRepository.findByIds(ids);
