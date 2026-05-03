@@ -1,6 +1,6 @@
 import { HttpException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { model, Model, Types } from 'mongoose';
 import { EmployeeProfile, EmployeeProfileDocument } from '../schemas/employee.schema';
 import { EmployeeRepository } from '../repositories/employee.repositories';
 
@@ -44,4 +44,30 @@ export class EmployeeService {
   }
 
 
+
+  async findByUserId(userId: string): Promise<any> {
+  const employee = await this.employeeProfileModel
+    .findOne({ user_id: new Types.ObjectId(userId) } as any) 
+    .populate({
+        path: 'assigned_hub_id', 
+        model: 'Hub' 
+    })
+    .exec();
+
+  if (!employee || !employee.assigned_hub_id) {
+    return {
+      hub: null,
+    };
+  }
+
+  const hub = employee.assigned_hub_id as any;
+
+  return {
+    hub: {
+      lat: hub.latitude, 
+      lng: hub.longitude,
+      name: hub.name,
+    }
+  };
+}
 }

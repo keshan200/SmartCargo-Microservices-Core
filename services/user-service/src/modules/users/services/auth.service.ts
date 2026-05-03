@@ -1,9 +1,11 @@
-import { Injectable, UnauthorizedException, ForbiddenException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ForbiddenException, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../../users/services/user.service';
 import * as bcrypt from 'bcrypt';
 import { UserRepository } from '../repositories/user.repository';
 import { ConfigService } from '@nestjs/config';
+import { ClientProxy } from '@nestjs/microservices';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class AuthService {
@@ -11,7 +13,12 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
     private readonly userRepository: UserRepository,
-    private configService: ConfigService
+    private configService: ConfigService,
+
+    @Inject
+    ('FLEET_SERVICE') private readonly client: ClientProxy,
+
+
   ) {}
 
  
@@ -32,14 +39,30 @@ export class AuthService {
 
 
   async login(email: string, pass: string) {
-    const user = await this.usersService.findByEmailForAuth(email); 
+
+    const user = await this.usersService.findByEmailForAuth(email);
+    
     
     if (!user || !(await bcrypt.compare(pass, user.password_hash))) {
       throw new UnauthorizedException('Invalid Credentials');
     }
 
-    const tokens = await this.getTokens(user._id.toString(), user.role);
-    return { tokens, user: { id: user._id, email: user.email, role: user.role } };
+    
+     const hubInfo = await firstValueFrom(
+      this.client.send({ cmd: 'get_hub_location' }, { userId: user._id.toString() }),
+    );
+
+   const tokens = await this.getTokens(user._id.toString(), user.role);
+
+   return {
+      tokens,
+      user: {
+        id: user._id,
+        email: user.email,
+        role: user.role,
+        hub: hubInfo 
+      }
+    };
   }
 
 
