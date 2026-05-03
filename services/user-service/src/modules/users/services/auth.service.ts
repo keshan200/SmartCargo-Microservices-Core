@@ -47,7 +47,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid Credentials');
     }
 
-    
+
      const hubInfo = await firstValueFrom(
       this.client.send({ cmd: 'get_hub_location' }, { userId: user._id.toString() }),
     );
@@ -80,9 +80,17 @@ export class AuthService {
       const user = await this.userRepository.findById(payload.id);
       if (!user) throw new UnauthorizedException();
 
-    
+      const hubInfo = await firstValueFrom(
+        this.client.send({ cmd: 'get_hub_location' }, { userId: user._id.toString() }),
+      );
+
       const accessToken = await this.jwtService.signAsync(
-        { id: user._id, email: user.email, role: user.role },
+        {
+           id: user._id,
+          email: user.email,
+          role: user.role,
+          hub: hubInfo
+        },
         { expiresIn: '15m' } 
       );
 
