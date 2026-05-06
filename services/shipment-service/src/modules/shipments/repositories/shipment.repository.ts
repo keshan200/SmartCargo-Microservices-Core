@@ -37,4 +37,18 @@ async findByIds(ids: string[]): Promise<ShipmentDocument[]> {
   async updateMany(filter: any, update: any) {
     return this.shipmentModel.updateMany(filter, update).exec();
   }
+
+
+async findWithPagination(filter: any, skip: number, limit: number) {
+  return await this.shipmentModel
+    .find(filter)
+    .sort({ createdAt: -1 }) 
+    .skip(skip)
+    .limit(limit)
+    .exec();
+}
+
+async count(filter: any) {
+  return await this.shipmentModel.countDocuments(filter).exec();
+}
 }

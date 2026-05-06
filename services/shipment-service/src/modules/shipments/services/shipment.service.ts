@@ -18,7 +18,7 @@ export class ShipmentService {
 
 
 private calculateCost(weight: number, distance: number, serviceType: string): number {
-    // දැන් ගණන් ටික එන්නේ Config ෆයිල් එකෙන්
+    
     const { base_price, price_per_kg, price_per_km, express_multiplier } = PricingConfig;
 
     let total = base_price + (weight * price_per_kg) + (distance * price_per_km);
@@ -113,5 +113,31 @@ async getShipmentsByList(ids: string[]): Promise<any[]> {
       $set: { sender_id: userId } 
     }
   );
+}
+
+
+async getAllShipments() {
+  return await this.shipmentRepository.findAll();
+}
+
+async findAll(query: any) {
+  const { page = 1, limit = 10, status } = query;
+  const skip = (page - 1) * limit;
+
+  const filter = status ? { status } : {};
+
+  const [data, total] = await Promise.all([
+    this.shipmentRepository.findWithPagination(filter, skip, limit),
+    this.shipmentRepository.count(filter),
+  ]);
+
+  return {
+    data,
+    meta: {
+      total,
+      page: Number(page),
+      last_page: Math.ceil(total / limit),
+    },
+  };
 }
 }

@@ -4,10 +4,11 @@ import type { Request, Response } from 'express';
 
 @Controller('api/v1/auth')
 export class AuthController {
+
   constructor(private authService: AuthService) {}
 
-  @Post('login')
-  async login(@Body() loginDto: any, @Res({ passthrough: true }) res: Response) {
+@Post('login')
+async login(@Body() loginDto: any, @Res({ passthrough: true }) res: Response) {
     const { tokens, user } = await this.authService.login(loginDto.email, loginDto.password);
 
    
@@ -23,7 +24,9 @@ export class AuthController {
       accessToken: tokens.accessToken,
       user 
     };
-  }
+}
+
+
 
 
 @Post('refresh-token')
