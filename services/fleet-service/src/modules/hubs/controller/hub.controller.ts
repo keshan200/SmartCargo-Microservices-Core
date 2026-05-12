@@ -35,6 +35,7 @@ export class HubController {
 async getHubDetails(hubId: string) {
   const hub = await this.hubService.getHubById(hubId);
   console.log("Fetching details for Hub:", hubId);
+  console.log('Employee Hub Datass:', hub.hub_name, hub.latitude, hub.longitude);
 
   if (!hub) {
     console.error("Hub not found:", hubId);
@@ -43,7 +44,8 @@ async getHubDetails(hubId: string) {
 
   return { 
     lat: hub.latitude, 
-    lng: hub.longitude 
+    lng: hub.longitude ,
+    name : hub.hub_name
   };
 }
 

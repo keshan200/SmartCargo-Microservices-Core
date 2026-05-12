@@ -11,6 +11,9 @@ export class EmployeeMesssageController {
     
     const employee = await this.employeeService.findByUserId(data.userId);
     
+console.log('Employee Hub Data:', employee.hub_name, employee.latitude, employee.longitude);
+
+
     if (!employee || !employee.hub) {
       return null;
     }
@@ -18,7 +21,7 @@ export class EmployeeMesssageController {
     return {
       lat: employee.hub.lat,
       lng: employee.hub.lng,
-      name: employee.hub.name
+      name: employee.hub.name,
     };
   }
 }

@@ -66,7 +66,7 @@ export class EmployeeService {
     hub: {
       lat: hub.latitude, 
       lng: hub.longitude,
-      name: hub.name,
+      name: hub.hub_name,
     }
   };
 }

@@ -89,7 +89,7 @@ export class AuthService {
            id: user._id,
           email: user.email,
           role: user.role,
-          hub: hubInfo
+          
         },
         { expiresIn: '15m' } 
       );
